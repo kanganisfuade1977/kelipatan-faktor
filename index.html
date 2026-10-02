@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Adu Cepat Kelipatan dan Faktor - Kelas 4 SD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #FF6B6B;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --dark: #2C3E50;
+            --light: #F7FFF7;
+            --grass: #88D49E;
+            --sky: #87CEEB;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--sky);
+            overflow: hidden; /* Prevent scrolling */
+            touch-action: none; /* Prevent pinch zoom on mobile */
+        }
+
+        h1, h2, h3, .baloo {
+            font-family: 'Baloo 2', cursive;
+        }
+
+        /* Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .glass-dark {
+            background: rgba(44, 62, 80, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        /* 3D Buttons */
+        .btn-3d {
+            transition: all 0.1s;
+            box-shadow: 0px 6px 0px 0px rgba(0,0,0,0.2);
+            transform: translateY(0);
+        }
+        .btn-3d:active {
+            box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.2);
+            transform: translateY(6px);
+        }
+        
+        .btn-answer {
+            transition: all 0.2s;
+            box-shadow: 0px 4px 0px 0px rgba(0,0,0,0.2);
+        }
+        .btn-answer:active {
+            box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.2);
+            transform: translateY(4px);
+        }
+
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+
+        @keyframes run {
+            0% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-15px) rotate(10deg); }
+            50% { transform: translateY(0) rotate(0deg); }
+            75% { transform: translateY(-15px) rotate(-10deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        .animate-run { animation: run 0.4s infinite; }
+
+        @keyframes sad {
+            0% { transform: scale(1); filter: grayscale(0%); }
+            50% { transform: scale(0.9) translateY(5px); filter: grayscale(50%); }
+            100% { transform: scale(1); filter: grayscale(0%); }
+        }
+        .animate-sad { animation: sad 1s forwards; }
+
+        @keyframes turbo {
+            0% { filter: drop-shadow(0 0 10px #FFE66D) brightness(1.2); transform: scale(1) translateX(0); }
+            50% { filter: drop-shadow(0 0 20px #FF6B6B) brightness(1.5); transform: scale(1.1) translateX(5px); }
+            100% { filter: drop-shadow(0 0 10px #FFE66D) brightness(1.2); transform: scale(1) translateX(0); }
+        }
+        .animate-turbo { animation: turbo 0.3s infinite; }
+
+        @keyframes pulse-timer {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; color: red; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .timer-warning { animation: pulse-timer 1s infinite; }
+
+        /* Track Environment */
+        .track-bg {
+            background: linear-gradient(to bottom, var(--sky) 0%, #a2e09b 60%, var(--grass) 100%);
+        }
+        
+        .road {
+            background-color: #d2b48c;
+            border-top: 4px solid #a0522d;
+            border-bottom: 4px solid #a0522d;
+            position: relative;
+            box-shadow: inset 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .road::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-image: linear-gradient(to right, transparent 50%, white 50%);
+            background-size: 30px 100%;
+            opacity: 0.5;
+        }
+
+        /* Avatar Styling */
+        .avatar-emoji {
+            font-size: 4rem;
+            line-height: 1;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
+            transition: all 0.5s ease-out; /* Smooth forward movement */
+        }
+
+        /* Confetti */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0;
+        }
+        
+        /* Hide scrollbar for smooth UI */
+        ::-webkit-scrollbar { display: none; }
+        
+        #game-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="w-screen h-screen flex flex-col track-bg text-gray-800">
+
+    <!-- Background Canvas for Environment Particles (Clouds, Leaves, Birds) -->
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Top Navigation Bar -->
+    <nav class="absolute top-0 left-0 w-full p-2 z-50 flex justify-between items-center pointer-events-none">
+        <div class="flex gap-2 pointer-events-auto">
+            <button id="btn-home" class="bg-white/50 hover:bg-white p-2 rounded-full shadow backdrop-blur transition hidden">
+                🏠
+            </button>
+            <button id="btn-help" class="bg-white/50 hover:bg-white p-2 rounded-full shadow backdrop-blur transition">
+                ❓
+            </button>
+        </div>
+        <div class="flex gap-2 pointer-events-auto bg-white/50 rounded-full px-3 py-1 backdrop-blur shadow items-center">
+            <button id="btn-music" class="text-xl hover:scale-110 transition">🎵</button>
+            <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.5" class="w-16 h-1 bg-gray-300 rounded-lg appearance-none cursor-pointer">
+            <div class="w-px h-4 bg-gray-400 mx-1"></div>
+            <button id="btn-sfx" class="text-xl hover:scale-110 transition">🔊</button>
+            <button id="btn-fullscreen" class="text-xl hover:scale-110 transition ml-2">🖥️</button>
+        </div>
+    </nav>
+
+    <!-- Screen: Splash -->
+    <div id="screen-splash" class="absolute inset-0 flex flex-col items-center justify-center z-40 transition-opacity duration-500">
+        <div class="glass p-8 text-center max-w-lg w-11/12 mx-auto flex flex-col items-center animate-float">
+            <div class="text-6xl mb-4">🏆🚀</div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-[#FF6B6B] drop-shadow-md baloo leading-tight mb-2">
+                Adu Cepat
+            </h1>
+            <h2 class="text-2xl md:text-3xl font-bold text-[#2C3E50] mb-6 baloo">
+                Kelipatan & Faktor
+            </h2>
+            <p class="text-gray-700 font-bold mb-8">Matematika Kelas 4 SD - Kurikulum Merdeka</p>
+            <button id="btn-start" class="btn-3d bg-[#4ECDC4] text-white text-2xl font-bold py-4 px-10 rounded-full w-full max-w-xs baloo">
+                MULAI MAIN ▶
+            </button>
+        </div>
+    </div>
+
+    <!-- Screen: Setup -->
+    <div id="screen-setup" class="absolute inset-0 flex flex-col items-center justify-center z-30 opacity-0 pointer-events-none transition-opacity duration-500">
+        <div class="glass p-6 md:p-8 w-11/12 max-w-4xl max-h-[90vh] overflow-y-auto">
+            <h2 class="text-3xl font-bold text-center mb-6 baloo text-[#2C3E50]">Persiapan Balapan!</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Player 1 Setup -->
+                <div class="bg-red-100/50 p-4 rounded-2xl border-2 border-red-300">
+                    <h3 class="text-xl font-bold mb-2 text-red-600 baloo">Pemain 1 (Kiri)</h3>
+                    <input type="text" id="p1-name" placeholder="Nama Player 1" class="w-full p-2 mb-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-400 font-bold text-center" value="Player 1">
+                    <p class="text-sm font-bold mb-2 text-center">Pilih Avatar:</p>
+                    <div class="flex justify-center gap-2 text-3xl" id="p1-avatars">
+                        <button class="avatar-select p-2 rounded-xl bg-white border-2 border-transparent hover:border-red-400 transition" data-player="1" data-avatar="👦">👦</button>
+                        <button class="avatar-select p-2 rounded-xl bg-white border-2 border-transparent hover:border-red-400 transition" data-player="1" data-avatar="👧">👧</button>
+                        <button class="avatar-select p-2 rounded-xl bg-white border-2 border-transparent hover:border-red-400 transition" data-player="1" data-avatar="🐰">🐰</button>
+                        <button class="avatar-select p-2 rounded-xl bg-white border-2 border-transparent hover:border-red-400 transition" data-player="1" data-avatar="🐼">🐼</button>
+                        <button class="avatar-select p-2 rounded-xl bg-white border-2 border-transparent hover:border-red-400 transition" data-player="1" data-avatar="🦊">🦊</button>
+                    </div>
+                </div>
+
+                <!-- Player 2 Setup -->
+                <div class="bg-blue-100/50 p-4 rounded-2xl border-2 border-blue-300">
+                    <h3 class="text-xl font-bold mb-2 text-blue-600 baloo">Pemain 2 (Kanan)</h3>
+                    <input type="text" id="p2-name" placeholder="Nama Player 2" class="w-full p-2 mb-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 font-bold text-center" value="Player 2">
+                    <p class="text-sm font-bold mb-2 text-center">Pilih Avatar:</p>
+                    <div class="flex justify-center gap-2 text-3xl" id="p2-avatars">
+                        <button class="avatar-select p-2 rounded-xl bg-white border-2 border-transparent hover:border-blue-400 transition" data-player="2" data-avatar="👦">👦</button>
+                        <button class="avatar-select p-2 rounded-xl bg-white border-2 border-transparent hover:border-blue-400 transition" data-player="2" data-avatar="👧">👧</button>
+                        <button class="avatar-select p-2 rounded-xl bg-white border-2 border-transparent hover:border-blue-400 transition" data-player="2" data-avatar="🐱">🐱</button>
+                        <button class="avatar-select p-2 rounded-xl bg-white border-2 border-transparent hover:border-blue-400 transition" data-player="2" data-avatar="🐼">🐼</button>
+                        <button class="avatar-select p-2 rounded-xl bg-white border-2 border-transparent hover:border-blue-400 transition" data-player="2" data-avatar="🦊">🦊</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 text-center">
+                <h3 class="text-xl font-bold mb-4 baloo">Pilih Tingkat Kesulitan</h3>
+                <div class="flex justify-center gap-4">
+                    <button class="level-btn btn-3d bg-green-400 text-white font-bold py-2 px-6 rounded-xl border-b-4 border-green-600" data-level="mudah">🟢 Mudah</button>
+                    <button class="level-btn btn-3d bg-yellow-400 text-white font-bold py-2 px-6 rounded-xl border-b-4 border-yellow-600" data-level="sedang">🟡 Sedang</button>
+                    <button class="level-btn btn-3d bg-red-400 text-white font-bold py-2 px-6 rounded-xl border-b-4 border-red-600" data-level="sulit">🔴 Sulit</button>
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-center">
+                <button id="btn-play" class="btn-3d bg-[#FF6B6B] text-white text-2xl font-bold py-3 px-12 rounded-full w-full max-w-md baloo opacity-50 cursor-not-allowed" disabled>
+                    SIAP BALAPAN! 🏁
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen: Game -->
+    <div id="screen-game" class="absolute inset-0 flex flex-col z-20 opacity-0 pointer-events-none transition-opacity duration-500">
+        
+        <!-- Top Info Bar -->
+        <div class="w-full flex justify-between px-4 pt-12 pb-2">
+            <div class="glass px-4 py-1 flex flex-col items-center">
+                <span class="text-xs font-bold text-gray-500">LEVEL</span>
+                <span id="ui-level" class="font-bold text-lg text-[#2C3E50] uppercase">Mudah</span>
+            </div>
+            <div class="glass px-4 py-1 flex flex-col items-center">
+                <span class="text-xs font-bold text-gray-500">SOAL KE</span>
+                <span class="font-bold text-xl text-[#FF6B6B] baloo"><span id="ui-qnum">1</span>/10</span>
+            </div>
+            <div class="glass px-4 py-1 flex items-center justify-center w-16 h-16 rounded-full relative">
+                <svg class="absolute inset-0 w-full h-full transform -rotate-90">
+                    <circle cx="32" cy="32" r="28" stroke="#e5e7eb" stroke-width="4" fill="none"></circle>
+                    <circle id="timer-ring" cx="32" cy="32" r="28" stroke="#4ECDC4" stroke-width="4" fill="none" stroke-dasharray="175" stroke-dashoffset="0" class="transition-all duration-1000 linear"></circle>
+                </svg>
+                <span id="ui-timer" class="font-bold text-2xl z-10 baloo text-[#2C3E50]">20</span>
+            </div>
+        </div>
+
+        <!-- Center Question Area -->
+        <div class="w-full flex justify-center px-4 z-30 mb-2 mt-2">
+            <div class="glass-dark w-full max-w-3xl p-4 md:p-6 text-center relative overflow-hidden">
+                <!-- Decorative Elements -->
+                <div class="absolute -top-4 -left-4 text-4xl opacity-20 transform rotate-12">✖</div>
+                <div class="absolute -bottom-4 -right-4 text-4xl opacity-20 transform -rotate-12">÷</div>
+                
+                <h3 id="question-text" class="text-xl md:text-3xl font-bold baloo leading-snug drop-shadow">
+                    Pertanyaan akan muncul di sini?
+                </h3>
+            </div>
+        </div>
+
+        <!-- Racing Track Area -->
+        <div class="flex-1 w-full relative flex flex-col justify-center px-4 pb-4">
+            <!-- Finish Line Marker -->
+            <div class="absolute right-4 top-0 bottom-0 w-16 flex flex-col justify-center items-center z-10 border-l-4 border-dashed border-yellow-400">
+                <div class="text-4xl animate-bounce">🏆</div>
+                <div class="font-bold text-white bg-red-600 px-2 py-1 rounded-md text-xs mt-2 rotate-90 transform origin-left">FINISH</div>
+            </div>
+
+            <!-- Player 1 Track -->
+            <div class="road w-full h-24 rounded-lg mb-4 relative flex items-center">
+                <!-- P1 Avatar -->
+                <div id="p1-avatar-container" class="absolute left-2 z-20 flex flex-col items-center" style="transform: translateX(0%);">
+                    <div id="p1-name-tag" class="text-xs font-bold bg-white/80 px-2 rounded-full mb-1 border border-red-300">P1</div>
+                    <div id="p1-sprite" class="avatar-emoji">👦</div>
+                </div>
+            </div>
+
+            <!-- Player 2 Track -->
+            <div class="road w-full h-24 rounded-lg relative flex items-center">
+                <!-- P2 Avatar -->
+                <div id="p2-avatar-container" class="absolute left-2 z-20 flex flex-col items-center" style="transform: translateX(0%);">
+                    <div id="p2-name-tag" class="text-xs font-bold bg-white/80 px-2 rounded-full mb-1 border border-blue-300">P2</div>
+                    <div id="p2-sprite" class="avatar-emoji">👧</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls Area (Split for 2 Players) -->
+        <div class="w-full h-auto bg-white/40 backdrop-blur-md border-t border-white/50 p-2 flex pb-safe">
+            
+            <!-- Player 1 Controls (Left) -->
+            <div class="w-1/2 pr-2 border-r border-gray-400/30 flex flex-col">
+                <div class="flex justify-between items-center mb-2 px-2">
+                    <div class="font-bold baloo text-red-600 text-lg" id="ctrl-p1-name">Pemain 1</div>
+                    <div class="bg-red-500 text-white px-3 py-1 rounded-full font-bold shadow-inner">
+                        ⭐ <span id="score-p1">0</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 flex-1" id="p1-buttons">
+                    <button class="btn-answer bg-gradient-to-b from-red-400 to-red-600 text-white font-bold text-lg md:text-xl rounded-xl p-2 break-words leading-tight" data-p="1" data-idx="0">A</button>
+                    <button class="btn-answer bg-gradient-to-b from-blue-400 to-blue-600 text-white font-bold text-lg md:text-xl rounded-xl p-2 break-words leading-tight" data-p="1" data-idx="1">B</button>
+                    <button class="btn-answer bg-gradient-to-b from-green-400 to-green-600 text-white font-bold text-lg md:text-xl rounded-xl p-2 break-words leading-tight" data-p="1" data-idx="2">C</button>
+                    <button class="btn-answer bg-gradient-to-b from-yellow-400 to-yellow-600 text-white font-bold text-lg md:text-xl rounded-xl p-2 break-words leading-tight" data-p="1" data-idx="3">D</button>
+                </div>
+            </div>
+
+            <!-- Player 2 Controls (Right) -->
+            <div class="w-1/2 pl-2 flex flex-col">
+                <div class="flex justify-between items-center mb-2 px-2">
+                    <div class="bg-blue-500 text-white px-3 py-1 rounded-full font-bold shadow-inner">
+                        ⭐ <span id="score-p2">0</span>
+                    </div>
+                    <div class="font-bold baloo text-blue-600 text-lg" id="ctrl-p2-name">Pemain 2</div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 flex-1" id="p2-buttons">
+                    <button class="btn-answer bg-gradient-to-b from-red-400 to-red-600 text-white font-bold text-lg md:text-xl rounded-xl p-2 break-words leading-tight" data-p="2" data-idx="0">A</button>
+                    <button class="btn-answer bg-gradient-to-b from-blue-400 to-blue-600 text-white font-bold text-lg md:text-xl rounded-xl p-2 break-words leading-tight" data-p="2" data-idx="1">B</button>
+                    <button class="btn-answer bg-gradient-to-b from-green-400 to-green-600 text-white font-bold text-lg md:text-xl rounded-xl p-2 break-words leading-tight" data-p="2" data-idx="2">C</button>
+                    <button class="btn-answer bg-gradient-to-b from-yellow-400 to-yellow-600 text-white font-bold text-lg md:text-xl rounded-xl p-2 break-words leading-tight" data-p="2" data-idx="3">D</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Overlay (Correct/Wrong messages) -->
+        <div id="feedback-overlay" class="absolute inset-0 pointer-events-none flex items-center justify-center z-40 opacity-0 transition-opacity duration-300">
+            <div id="feedback-text" class="text-6xl font-black text-white drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)] baloo transform scale-50 transition-transform duration-300">
+                BENAR!
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen: Results -->
+    <div id="screen-results" class="absolute inset-0 flex flex-col items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-500 backdrop-blur-md bg-black/40">
+        <!-- Confetti Canvas -->
+        <canvas id="confetti-canvas" class="absolute inset-0 pointer-events-none z-0"></canvas>
+        
+        <div class="glass p-6 md:p-8 w-11/12 max-w-2xl text-center relative z-10 animate-float bg-white/90">
+            <h2 class="text-4xl font-extrabold text-[#FF6B6B] baloo mb-2">BALAPAN SELESAI!</h2>
+            
+            <div class="my-6">
+                <div class="text-2xl font-bold text-gray-700">JUARA 1 🥇</div>
+                <div id="winner-name" class="text-5xl font-black text-yellow-500 baloo drop-shadow-md my-2">Player 1</div>
+                <div class="text-6xl my-2" id="winner-avatar">🏆</div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 bg-gray-100 rounded-xl p-4 mb-6">
+                <!-- Stat P1 -->
+                <div class="flex flex-col items-center p-2 rounded-lg" id="stat-p1-box">
+                    <div class="font-bold text-lg truncate w-full" id="stat-p1-name">Player 1</div>
+                    <div class="text-3xl font-black text-[#FF6B6B]" id="stat-p1-score">100</div>
+                    <div class="text-sm text-gray-600">Poin</div>
+                    <div class="text-xs mt-2 text-green-600" id="stat-p1-correct">Benar: 0</div>
+                    <div class="text-xs text-red-600" id="stat-p1-wrong">Salah: 0</div>
+                </div>
+                <!-- Stat P2 -->
+                <div class="flex flex-col items-center p-2 rounded-lg" id="stat-p2-box">
+                    <div class="font-bold text-lg truncate w-full" id="stat-p2-name">Player 2</div>
+                    <div class="text-3xl font-black text-[#4ECDC4]" id="stat-p2-score">80</div>
+                    <div class="text-sm text-gray-600">Poin</div>
+                    <div class="text-xs mt-2 text-green-600" id="stat-p2-correct">Benar: 0</div>
+                    <div class="text-xs text-red-600" id="stat-p2-wrong">Salah: 0</div>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button id="btn-restart" class="btn-3d bg-[#4ECDC4] text-white font-bold py-3 px-6 rounded-xl baloo text-xl w-full sm:w-auto">
+                    Main Lagi 🔄
+                </button>
+                <button id="btn-menu" class="btn-3d bg-gray-500 text-white font-bold py-3 px-6 rounded-xl baloo text-xl w-full sm:w-auto">
+                    Ke Menu Utama 🏠
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Petunjuk Modal -->
+    <div id="modal-help" class="absolute inset-0 flex items-center justify-center z-50 hidden backdrop-blur-sm bg-black/50">
+        <div class="glass bg-white/95 p-6 max-w-md w-11/12">
+            <h2 class="text-2xl font-bold baloo mb-4 text-[#FF6B6B]">Cara Bermain</h2>
+            <ul class="list-disc pl-5 space-y-2 font-bold text-sm text-gray-700">
+                <li>Bermain berdua (Pemain 1 di kiri, Pemain 2 di kanan).</li>
+                <li>Baca pertanyaan di tengah layar.</li>
+                <li>Pilih jawaban yang benar dari tombol warnamu secepat mungkin!</li>
+                <li>Jawaban benar = Maju +10 Poin.</li>
+                <li>Menjawab paling cepat = Bonus +5 Poin.</li>
+                <li>Jawaban salah = Berhenti & Poin 0.</li>
+                <li>Benar berturut-turut akan memicu <b>TURBO!</b></li>
+                <li>Siapa yang mencapai garis Finish duluan adalah JUARA!</li>
+            </ul>
+            <button id="btn-close-help" class="mt-6 w-full btn-3d bg-[#2C3E50] text-white font-bold py-2 rounded-xl">Mengerti!</button>
+        </div>
+    </div>
+
+    <script>
+        // --- GAME STATE ---
+        const gameState = {
+            screen: 'splash', // splash, setup, game, results
+            level: null, // mudah, sedang, sulit
+            players: {
+                1: { name: 'Player 1', avatar: '👦', score: 0, pos: 0, streak: 0, correct: 0, wrong: 0, answeredThisRound: false },
+                2: { name: 'Player 2', avatar: '👧', score: 0, pos: 0, streak: 0, correct: 0, wrong: 0, answeredThisRound: false }
+            },
+            questions: [],
+            currentQIndex: 0,
+            timer: 20,
+            timerInterval: null,
+            roundActive: false,
+            firstAnswerer: null,
+            settings: { music: true, sfx: true, volume: 0.5 },
+            trackLength: 10 // Steps to finish
+        };
+
+        // --- QUESTION BANK (Kelipatan & Faktor, Kelas 4 SD) ---
+        const rawQuestions = {
+            mudah: [
+                { q: "Kelipatan dari 4 adalah...", opts: ["4, 8, 12", "2, 4, 6", "1, 2, 4", "4, 5, 6"], a: 0 },
+                { q: "Faktor dari 10 adalah...", opts: ["2, 4, 6, 8", "1, 2, 5, 10", "10, 20, 30", "1, 10"], a: 1 },
+                { q: "Bilangan kelipatan 5 yang kurang dari 20 adalah...", opts: ["5, 10, 15", "10, 15, 20", "5, 15, 25", "1, 5, 10"], a: 0 },
+                { q: "Faktor dari 8 adalah...", opts: ["2, 4, 6, 8", "1, 2, 4, 8", "8, 16, 24", "1, 8"], a: 1 },
+                { q: "Semua bilangan kelipatan 2 adalah bilangan...", opts: ["Ganjil", "Prima", "Genap", "Pecahan"], a: 2 },
+                { q: "Angka 12 adalah kelipatan dari...", opts: ["5", "7", "3", "9"], a: 2 },
+                { q: "Faktor dari 15 adalah...", opts: ["1, 3, 5, 15", "3, 6, 9, 12", "5, 10, 15", "1, 15"], a: 0 },
+                { q: "Kelipatan 6 yang pertama adalah...", opts: ["1", "6", "12", "0"], a: 1 },
+                { q: "Angka 7 memiliki berapa banyak faktor?", opts: ["1", "3", "2", "4"], a: 2 },
+                { q: "Angka 20 adalah kelipatan dari...", opts: ["3 dan 4", "4 dan 5", "6 dan 7", "2 dan 3"], a: 1 },
+                { q: "Kelipatan 3 antara 10 dan 15 adalah...", opts: ["12", "11", "13", "14"], a: 0 },
+                { q: "Faktor dari angka 6 adalah...", opts: ["1, 2, 3, 6", "2, 4, 6", "6, 12, 18", "1, 6"], a: 0 }
+            ],
+            sedang: [
+                { q: "Kelipatan persekutuan pertama dari 2 dan 3 adalah...", opts: ["6", "12", "5", "8"], a: 0 },
+                { q: "Faktor persekutuan dari 12 dan 18 adalah...", opts: ["1, 2, 4", "1, 2, 3, 6", "2, 4, 6", "3, 6, 9"], a: 1 },
+                { q: "Kelipatan 4 di antara 10 dan 20 adalah...", opts: ["12, 16", "14, 18", "12, 15", "16, 20"], a: 0 },
+                { q: "KPK dari 3 dan 4 adalah...", opts: ["7", "1", "12", "24"], a: 2 },
+                { q: "FPB dari 8 dan 12 adalah...", opts: ["2", "4", "8", "24"], a: 1 },
+                { q: "Faktor dari 24 yang lebih dari 10 adalah...", opts: ["12, 24", "8, 12", "6, 8", "24, 48"], a: 0 },
+                { q: "Kelipatan persekutuan dari 5 dan 10 adalah...", opts: ["5, 10, 15", "10, 20, 30", "15, 25", "1, 5"], a: 1 },
+                { q: "KPK dari 6 dan 8 adalah...", opts: ["14", "2", "24", "48"], a: 2 },
+                { q: "Faktor persekutuan terbesar (FPB) dari 15 dan 20 adalah...", opts: ["1", "5", "10", "60"], a: 1 },
+                { q: "Kelipatan 7 yang habis dibagi 2 adalah...", opts: ["14, 28", "21, 35", "7, 14", "28, 42"], a: 0 },
+                { q: "Faktor prima dari 10 adalah...", opts: ["1, 2", "2, 5", "5, 10", "1, 10"], a: 1 },
+                { q: "Bilangan prima terkecil adalah...", opts: ["0", "1", "2", "3"], a: 2 }
+            ],
+            sulit: [
+                { q: "Lampu A menyala tiap 3 menit, B tiap 4 menit. Mereka akan menyala bersama pada menit ke-...", opts: ["7", "12", "24", "1"], a: 1 },
+                { q: "Ibu membagi 12 apel & 18 jeruk ke plastik sama banyak. Plastik terbanyak yang dibutuhkan?", opts: ["4", "6", "3", "2"], a: 1 },
+                { q: "KPK dari 12 dan 15 adalah...", opts: ["60", "30", "45", "3"], a: 0 },
+                { q: "FPB dari 24 dan 36 adalah...", opts: ["6", "8", "12", "72"], a: 2 },
+                { q: "Andi renang tiap 4 hari, Budi tiap 6 hari. Mereka renang bersama tiap ... hari.", opts: ["10", "2", "12", "24"], a: 2 },
+                { q: "Faktor prima dari bilangan 30 adalah...", opts: ["2, 3, 5", "3, 5, 10", "2, 15", "5, 6"], a: 0 },
+                { q: "Kelipatan persekutuan terkecil dari 4, 6, dan 8 adalah...", opts: ["12", "24", "48", "2"], a: 1 },
+                { q: "20 permen merah & 30 biru dibagi rata. Berapa anak maksimal yang mendapatkannya?", opts: ["5 anak", "10 anak", "20 anak", "50 anak"], a: 1 },
+                { q: "Selisih KPK dan FPB dari angka 6 dan 8 adalah...", opts: ["24", "22", "26", "2"], a: 1 },
+                { q: "Jumlah dua kelipatan pertama dari 8 adalah...", opts: ["16", "32", "24", "8"], a: 2 },
+                { q: "Faktor prima penyusun angka 42 adalah...", opts: ["2, 3, 7", "6, 7", "2, 21", "3, 14"], a: 0 }
+            ]
+        };
+
+        // --- STREAMING_CHUNK:Audio Engine Setup (Web Audio API & Speech) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let bgmOscillators = [];
+        let isBgmPlaying = false;
+        
+        // Simple Synth for SFX
+        function playTone(freq, type, duration, vol=1) {
+            if (!gameState.settings.sfx) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            
+            gain.gain.setValueAtTime(vol * gameState.settings.volume, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        const sfx = {
+            correct: () => {
+                playTone(523.25, 'sine', 0.1, 0.5); // C5
+                setTimeout(() => playTone(659.25, 'sine', 0.2, 0.5), 100); // E5
+                setTimeout(() => playTone(783.99, 'sine', 0.4, 0.5), 200); // G5
+            },
+            wrong: () => {
+                playTone(150, 'sawtooth', 0.3, 0.5);
+                setTimeout(() => playTone(100, 'sawtooth', 0.4, 0.5), 200);
+            },
+            tick: () => playTone(800, 'square', 0.05, 0.1),
+            finish: () => {
+                [523, 659, 783, 1046, 783, 1046, 1318].forEach((f, i) => {
+                    setTimeout(() => playTone(f, 'square', 0.2, 0.4), i * 150);
+                });
+            },
+            turbo: () => {
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(200, now);
+                osc.frequency.linearRampToValueAtTime(800, now + 0.5);
+                gain.gain.setValueAtTime(0.2 * gameState.settings.volume, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.5);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            }
+        };
+
+        // Commentator Voice (Speech Synthesis)
+        const voicesData = {
+            intro: ["Selamat datang di Adu Cepat Menentukan Kelipatan Faktor!", "Siap balapan? Mari kita mulai!"],
+            anis: "Saya Anis Fuad, akan membersamai permainan kalian.",
+            correct: ["Tepat sekali!", "Pintar!", "Hebat!", "Jawaban yang luar biasa!"],
+            wrong: ["Ayo coba lagi!", "Belum tepat.", "Jangan menyerah!", "Ups, salah langkah."],
+            intense: ["Persaingan semakin sengit!", "Wah, jaraknya dekat sekali!", "Siapa yang akan menang?"],
+            win: ["Selamat! Kita memiliki pemenang!", "Luar biasa, juara telah tiba di garis akhir!"]
+        };
+
+        function speak(text) {
+            if (!gameState.settings.sfx || !window.speechSynthesis) return;
+            window.speechSynthesis.cancel(); // clear queue
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'id-ID';
+            utterance.rate = 1.1; // Slightly faster, more energetic
+            utterance.pitch = 1.0;
+            // Try to find a male voice, though browser dependent
+            const voices = window.speechSynthesis.getVoices();
+            const indonesianVoice = voices.find(v => v.lang.includes('id'));
+            if (indonesianVoice) utterance.voice = indonesianVoice;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function playRandomComment(category) {
+            if(Math.random() > 0.4) { // Don't speak every single time, ~60% chance
+                const arr = voicesData[category];
+                speak(arr[Math.floor(Math.random() * arr.length)]);
+            }
+        }
+
+        // Simple Background Music Loop (Web Audio)
+        function startBGM() {
+            if (isBgmPlaying || !gameState.settings.music) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            isBgmPlaying = true;
+            const chords = [
+                [261.63, 329.63, 392.00], // C
+                [349.23, 440.00, 523.25], // F
+                [392.00, 493.88, 587.33], // G
+                [261.63, 329.63, 392.00]  // C
+            ];
+            let chordIdx = 0;
+            let noteIdx = 0;
+            const tempo = 300; // ms per note
+
+            function playArp() {
+                if(!isBgmPlaying) return;
+                
+                // Speed up if someone is close to finish
+                let currentTempo = tempo;
+                const maxPos = Math.max(gameState.players[1].pos, gameState.players[2].pos);
+                if (maxPos > gameState.trackLength * 0.7) currentTempo = 200; // faster near end
+
+                const chord = chords[chordIdx];
+                const freq = chord[noteIdx];
+                
+                playTone(freq, 'triangle', 0.2, 0.05);
+                
+                noteIdx++;
+                if (noteIdx >= chord.length) {
+                    noteIdx = 0;
+                    chordIdx = (chordIdx + 1) % chords.length;
+                }
+                
+                setTimeout(playArp, currentTempo);
+            }
+            playArp();
+        }
+
+        function stopBGM() {
+            isBgmPlaying = false;
+        }
+
+        // --- STREAMING_CHUNK:Canvas Background Animation ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor(type) {
+                this.type = type; // 'cloud', 'leaf', 'star'
+                this.reset();
+            }
+            reset() {
+                this.x = this.type === 'cloud' ? -200 : Math.random() * canvas.width;
+                this.y = this.type === 'cloud' ? Math.random() * (canvas.height/3) : -50;
+                this.vx = this.type === 'cloud' ? 0.5 + Math.random() * 1 : (Math.random() - 0.5) * 2;
+                this.vy = this.type === 'cloud' ? 0 : 1 + Math.random() * 2;
+                this.size = this.type === 'cloud' ? 50 + Math.random() * 100 : 5 + Math.random() * 10;
+                this.opacity = this.type === 'cloud' ? 0.4 : 0.8;
+                this.color = this.type === 'leaf' ? `hsl(${70 + Math.random()*50}, 80%, 40%)` : '#FFF';
+                this.angle = 0;
+                this.spin = (Math.random() - 0.5) * 0.1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.angle += this.spin;
+                
+                if (this.type === 'leaf') {
+                    this.x += Math.sin(this.y * 0.05) * 2; // Flutter
+                }
+
+                // Wrap or reset
+                if (this.x > canvas.width + 200) this.reset();
+                if (this.y > canvas.height + 50 && this.type !== 'cloud') this.reset();
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                
+                if (this.type === 'cloud') {
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+                    ctx.arc(this.size*0.5, -this.size*0.3, this.size*0.8, 0, Math.PI * 2);
+                    ctx.arc(this.size, 0, this.size*0.9, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (this.type === 'leaf') {
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, this.size, this.size/2, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+        }
+
+        // Init some particles
+        for(let i=0; i<5; i++) particles.push(new Particle('cloud'));
+        for(let i=0; i<15; i++) particles.push(new Particle('leaf'));
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Draw gradient background handled by CSS, canvas is just overlay
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateCanvas);
+        }
+        animateCanvas();
+
+        // --- STREAMING_CHUNK:Game Logic & UI Updates ---
+        const ui = {
+            screens: {
+                splash: document.getElementById('screen-splash'),
+                setup: document.getElementById('screen-setup'),
+                game: document.getElementById('screen-game'),
+                results: document.getElementById('screen-results')
+            },
+            setup: {
+                p1Name: document.getElementById('p1-name'),
+                p2Name: document.getElementById('p2-name'),
+                p1Avatars: document.querySelectorAll('#p1-avatars .avatar-select'),
+                p2Avatars: document.querySelectorAll('#p2-avatars .avatar-select'),
+                levelBtns: document.querySelectorAll('.level-btn'),
+                btnPlay: document.getElementById('btn-play')
+            },
+            game: {
+                levelText: document.getElementById('ui-level'),
+                qNumText: document.getElementById('ui-qnum'),
+                timerText: document.getElementById('ui-timer'),
+                timerRing: document.getElementById('timer-ring'),
+                qText: document.getElementById('question-text'),
+                p1Name: document.getElementById('ctrl-p1-name'),
+                p2Name: document.getElementById('ctrl-p2-name'),
+                p1Score: document.getElementById('score-p1'),
+                p2Score: document.getElementById('score-p2'),
+                p1Buttons: document.querySelectorAll('#p1-buttons .btn-answer'),
+                p2Buttons: document.querySelectorAll('#p2-buttons .btn-answer'),
+                p1Sprite: document.getElementById('p1-sprite'),
+                p2Sprite: document.getElementById('p2-sprite'),
+                p1NameTag: document.getElementById('p1-name-tag'),
+                p2NameTag: document.getElementById('p2-name-tag'),
+                p1Container: document.getElementById('p1-avatar-container'),
+                p2Container: document.getElementById('p2-avatar-container'),
+                feedbackOverlay: document.getElementById('feedback-overlay'),
+                feedbackText: document.getElementById('feedback-text')
+            }
+        };
+
+        // Navigation
+        function showScreen(screenName) {
+            Object.values(ui.screens).forEach(el => {
+                el.classList.add('opacity-0', 'pointer-events-none');
+                el.classList.remove('z-40');
+            });
+            
+            const active = ui.screens[screenName];
+            active.classList.remove('opacity-0', 'pointer-events-none');
+            active.classList.add('z-40');
+            gameState.screen = screenName;
+
+            if (screenName === 'game') document.getElementById('btn-home').classList.remove('hidden');
+            else document.getElementById('btn-home').classList.add('hidden');
+        }
+
+        // Setup Logic
+        let selectedLevel = null;
+        
+        ui.setup.p1Avatars.forEach(btn => btn.addEventListener('click', (e) => selectAvatar(1, e.target)));
+        ui.setup.p2Avatars.forEach(btn => btn.addEventListener('click', (e) => selectAvatar(2, e.target)));
+        
+        function selectAvatar(player, btnTarget) {
+            const avatars = player === 1 ? ui.setup.p1Avatars : ui.setup.p2Avatars;
+            avatars.forEach(b => b.classList.remove('border-red-400', 'border-blue-400', 'bg-gray-100'));
+            btnTarget.classList.add(player === 1 ? 'border-red-400' : 'border-blue-400', 'bg-gray-100');
+            gameState.players[player].avatar = btnTarget.dataset.avatar;
+        }
+
+        ui.setup.levelBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                ui.setup.levelBtns.forEach(b => b.classList.remove('opacity-100', 'scale-110'));
+                ui.setup.levelBtns.forEach(b => b.classList.add('opacity-70'));
+                const target = e.target;
+                target.classList.remove('opacity-70');
+                target.classList.add('opacity-100', 'scale-110');
+                selectedLevel = target.dataset.level;
+                
+                // Enable Play button
+                ui.setup.btnPlay.disabled = false;
+                ui.setup.btnPlay.classList.remove('opacity-50', 'cursor-not-allowed');
+                ui.setup.btnPlay.classList.add('animate-pulse');
+            });
+        });
+
+        // Initialize Game
+        function initGame() {
+            // Audio context init requires gesture
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            
+            gameState.players[1].name = ui.setup.p1Name.value || 'Player 1';
+            gameState.players[2].name = ui.setup.p2Name.value || 'Player 2';
+            gameState.level = selectedLevel;
+            
+            // Reset stats
+            [1, 2].forEach(p => {
+                gameState.players[p].score = 0;
+                gameState.players[p].pos = 0;
+                gameState.players[p].streak = 0;
+                gameState.players[p].correct = 0;
+                gameState.players[p].wrong = 0;
+            });
+            
+            gameState.currentQIndex = 0;
+            
+            // Prepare Questions (shuffle, pick 10)
+            const levelQuestions = [...rawQuestions[gameState.level]];
+            levelQuestions.sort(() => Math.random() - 0.5); // simple shuffle
+            gameState.questions = levelQuestions.slice(0, 10);
+            
+            // Update UI
+            ui.game.p1Name.textContent = gameState.players[1].name;
+            ui.game.p2Name.textContent = gameState.players[2].name;
+            ui.game.p1NameTag.textContent = gameState.players[1].name.substring(0,5);
+            ui.game.p2NameTag.textContent = gameState.players[2].name.substring(0,5);
+            ui.game.p1Sprite.textContent = gameState.players[1].avatar;
+            ui.game.p2Sprite.textContent = gameState.players[2].avatar;
+            ui.game.levelText.textContent = gameState.level;
+            
+            updateScoresUI();
+            updateAvatarsUI();
+
+            showScreen('game');
+            startBGM();
+            speak(voicesData.anis);
+            setTimeout(() => {
+                playRandomComment('intro');
+                loadQuestion();
+            }, 3000);
+        }
+
+        // --- STREAMING_CHUNK:Game Loop & Logic ---
+        function loadQuestion() {
+            if (gameState.currentQIndex >= gameState.questions.length) {
+                // Out of questions but no one finished? The one furthest ahead wins.
+                endGame();
+                return;
+            }
+
+            const q = gameState.questions[gameState.currentQIndex];
+            ui.game.qNumText.textContent = gameState.currentQIndex + 1;
+            ui.game.qText.textContent = q.q;
+
+            // Reset Round State
+            gameState.roundActive = true;
+            gameState.firstAnswerer = null;
+            gameState.players[1].answeredThisRound = false;
+            gameState.players[2].answeredThisRound = false;
+
+            // Populate buttons
+            [1, 2].forEach(p => {
+                const buttons = p === 1 ? ui.game.p1Buttons : ui.game.p2Buttons;
+                buttons.forEach((btn, idx) => {
+                    btn.textContent = q.opts[idx];
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50', 'bg-gray-400');
+                    // Reset styling from previous round
+                    btn.className = btn.className.replace(/bg-gray-400/, '');
+                });
+            });
+
+            startTimer();
+        }
+
+        function startTimer() {
+            gameState.timer = 20;
+            updateTimerUI();
+            
+            clearInterval(gameState.timerInterval);
+            gameState.timerInterval = setInterval(() => {
+                gameState.timer--;
+                updateTimerUI();
+                
+                if (gameState.timer <= 3 && gameState.timer > 0) {
+                    sfx.tick();
+                    ui.game.timerText.classList.add('timer-warning');
+                } else {
+                    ui.game.timerText.classList.remove('timer-warning');
+                }
+
+                if (gameState.timer <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function updateTimerUI() {
+            ui.game.timerText.textContent = gameState.timer;
+            // Calculate stroke-dashoffset (175 is approx circumference of r=28)
+            const offset = 175 - (gameState.timer / 20) * 175;
+            ui.game.timerRing.style.strokeDashoffset = offset;
+            
+            if (gameState.timer <= 5) ui.game.timerRing.setAttribute('stroke', '#FF6B6B');
+            else ui.game.timerRing.setAttribute('stroke', '#4ECDC4');
+        }
+
+        function handleTimeOut() {
+            gameState.roundActive = false;
+            disableAllButtons();
+            showFeedback("Waktu Habis!", "gray");
+            setTimeout(() => {
+                gameState.currentQIndex++;
+                loadQuestion();
+            }, 2000);
+        }
+
+        // Answer Handling
+        ui.game.p1Buttons.forEach(btn => btn.addEventListener('click', () => handleAnswer(1, parseInt(btn.dataset.idx), btn)));
+        ui.game.p2Buttons.forEach(btn => btn.addEventListener('click', () => handleAnswer(2, parseInt(btn.dataset.idx), btn)));
+
+        function handleAnswer(player, selectedIdx, btnElement) {
+            if (!gameState.roundActive || gameState.players[player].answeredThisRound) return;
+
+            gameState.players[player].answeredThisRound = true;
+            const q = gameState.questions[gameState.currentQIndex];
+            const isCorrect = selectedIdx === q.a;
+
+            if (isCorrect) {
+                // Correct Answer
+                sfx.correct();
+                gameState.players[player].correct++;
+                let points = 10;
+                
+                // Bonus logic
+                if (gameState.firstAnswerer === null) {
+                    gameState.firstAnswerer = player;
+                    points += 5; // Fastest bonus
+                }
+
+                gameState.players[player].score += points;
+                gameState.players[player].pos += 1;
+                gameState.players[player].streak++;
+
+                // Visual Feedback
+                btnElement.classList.add('ring-4', 'ring-white', 'bg-green-500'); // Highlight correct
+                
+                const sprite = player === 1 ? ui.game.p1Sprite : ui.game.p2Sprite;
+                sprite.classList.add('animate-run');
+                setTimeout(() => sprite.classList.remove('animate-run'), 500);
+
+                if (gameState.players[player].streak >= 3) {
+                    sfx.turbo();
+                    sprite.classList.add('animate-turbo');
+                    showFeedback(`TURBO ${gameState.players[player].name}!`, "yellow");
+                } else {
+                    showFeedback("BENAR! +10", "green");
+                }
+                
+                playRandomComment('correct');
+                
+                // Disable opponent's buttons if someone gets it right to end round quickly
+                // OR let them answer for partial points? Prompt says "Adu Cepat", let's end round immediately if someone is right.
+                gameState.roundActive = false;
+                clearInterval(gameState.timerInterval);
+                disableAllButtons();
+
+                updateScoresUI();
+                updateAvatarsUI();
+                checkWinCondition(); // Check immediately after move
+
+            } else {
+                // Wrong Answer
+                sfx.wrong();
+                gameState.players[player].wrong++;
+                gameState.players[player].streak = 0;
+                
+                const sprite = player === 1 ? ui.game.p1Sprite : ui.game.p2Sprite;
+                sprite.classList.remove('animate-turbo'); // lose turbo
+                sprite.classList.add('animate-sad');
+                setTimeout(() => sprite.classList.remove('animate-sad'), 1000);
+
+                btnElement.classList.remove('bg-gradient-to-b');
+                btnElement.classList.add('bg-gray-400', 'opacity-50');
+                
+                playRandomComment('wrong');
+
+                // If both answered wrong, end round
+                const otherPlayer = player === 1 ? 2 : 1;
+                if (gameState.players[otherPlayer].answeredThisRound) {
+                    gameState.roundActive = false;
+                    clearInterval(gameState.timerInterval);
+                    showFeedback("Keduanya Salah!", "red");
+                    setTimeout(() => {
+                        gameState.currentQIndex++;
+                        loadQuestion();
+                    }, 2000);
+                }
+            }
+        }
+
+        function disableAllButtons() {
+            ui.game.p1Buttons.forEach(b => b.disabled = true);
+            ui.game.p2Buttons.forEach(b => b.disabled = true);
+        }
+
+        function showFeedback(text, colorType) {
+            ui.game.feedbackText.textContent = text;
+            let colorClass = "text-white";
+            if (colorType === 'yellow') colorClass = "text-yellow-300";
+            else if (colorType === 'red') colorClass = "text-red-400";
+            else if (colorType === 'green') colorClass = "text-green-400";
+            
+            ui.game.feedbackText.className = `text-5xl md:text-7xl font-black drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)] baloo transform scale-100 transition-transform duration-300 ${colorClass}`;
+            
+            ui.game.feedbackOverlay.classList.remove('opacity-0');
+            
+            setTimeout(() => {
+                ui.game.feedbackOverlay.classList.add('opacity-0');
+                ui.game.feedbackText.classList.remove('scale-100');
+                ui.game.feedbackText.classList.add('scale-50');
+            }, 1500);
+        }
+
+        function updateScoresUI() {
+            ui.game.p1Score.textContent = gameState.players[1].score;
+            ui.game.p2Score.textContent = gameState.players[2].score;
+        }
+
+        function updateAvatarsUI() {
+            // Track width minus finish line area (approx 80%)
+            const maxPercent = 85; 
+            const p1Percent = (gameState.players[1].pos / gameState.trackLength) * maxPercent;
+            const p2Percent = (gameState.players[2].pos / gameState.trackLength) * maxPercent;
+            
+            // Using CSS calc to position based on container width
+            ui.game.p1Container.style.transform = `translateX(calc(${p1Percent}cqw))`; // Using cqw if supported, else rely on relative % in wrapper
+            ui.game.p2Container.style.transform = `translateX(calc(${p2Percent}cqw))`;
+            
+            // Fallback since container queries might not be perfect everywhere
+            ui.game.p1Container.style.left = `${p1Percent}%`;
+            ui.game.p2Container.style.left = `${p2Percent}%`;
+        }
+
+        function checkWinCondition() {
+            const p1Pos = gameState.players[1].pos;
+            const p2Pos = gameState.players[2].pos;
+
+            if (p1Pos >= gameState.trackLength || p2Pos >= gameState.trackLength) {
+                // Allow animation to finish slightly before showing result
+                setTimeout(endGame, 1000); 
+            } else {
+                // Next question logic
+                setTimeout(() => {
+                    gameState.currentQIndex++;
+                    // Check if intense
+                    if (Math.abs(p1Pos - p2Pos) <= 1 && Math.max(p1Pos, p2Pos) > gameState.trackLength/2) {
+                        playRandomComment('intense');
+                    }
+                    loadQuestion();
+                }, 1500);
+            }
+        }
+
+        // --- STREAMING_CHUNK:Results & Finish Logic ---
+        function endGame() {
+            gameState.roundActive = false;
+            clearInterval(gameState.timerInterval);
+            
+            // Determine winner
+            let winner = 1;
+            let loser = 2;
+            
+            // If ended by questions running out, check pos then score
+            if (gameState.players[2].pos > gameState.players[1].pos || 
+               (gameState.players[2].pos === gameState.players[1].pos && gameState.players[2].score > gameState.players[1].score)) {
+                winner = 2;
+                loser = 1;
+            }
+
+            // Populate Results UI
+            document.getElementById('winner-name').textContent = gameState.players[winner].name;
+            document.getElementById('winner-avatar').textContent = gameState.players[winner].avatar;
+            
+            // Stats formatting
+            document.getElementById(`stat-p1-name`).textContent = gameState.players[1].name;
+            document.getElementById(`stat-p1-score`).textContent = gameState.players[1].score;
+            document.getElementById(`stat-p1-correct`).textContent = `Benar: ${gameState.players[1].correct}`;
+            document.getElementById(`stat-p1-wrong`).textContent = `Salah: ${gameState.players[1].wrong}`;
+
+            document.getElementById(`stat-p2-name`).textContent = gameState.players[2].name;
+            document.getElementById(`stat-p2-score`).textContent = gameState.players[2].score;
+            document.getElementById(`stat-p2-correct`).textContent = `Benar: ${gameState.players[2].correct}`;
+            document.getElementById(`stat-p2-wrong`).textContent = `Salah: ${gameState.players[2].wrong}`;
+            
+            // Highlight winner stat box
+            document.getElementById(`stat-p${winner}-box`).classList.add('bg-yellow-100', 'border-2', 'border-yellow-400');
+            document.getElementById(`stat-p${loser}-box`).classList.remove('bg-yellow-100', 'border-2', 'border-yellow-400');
+            document.getElementById(`stat-p${loser}-box`).classList.add('bg-gray-200');
+
+            showScreen('results');
+            sfx.finish();
+            speak(`Selamat! ${gameState.players[winner].name} memenangkan balapan!`);
+            startConfetti();
+        }
+
+        // Confetti Canvas Logic
+        let confettiCtx, confettiInterval;
+        function startConfetti() {
+            const confCanvas = document.getElementById('confetti-canvas');
+            confettiCtx = confCanvas.getContext('2d');
+            confCanvas.width = window.innerWidth;
+            confCanvas.height = window.innerHeight;
+            
+            const confParticles = [];
+            const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#88D49E', '#87CEEB'];
+            
+            for(let i=0; i<100; i++) {
+                confParticles.push({
+                    x: Math.random() * confCanvas.width,
+                    y: Math.random() * confCanvas.height - confCanvas.height,
+                    r: Math.random() * 6 + 2,
+                    dx: Math.random() * 4 - 2,
+                    dy: Math.random() * 5 + 2,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    tilt: Math.floor(Math.random() * 10) - 10,
+                    tiltAngle: 0,
+                    tiltAngleInc: (Math.random() * 0.07) + 0.05
+                });
+            }
+
+            function renderConfetti() {
+                confettiCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
+                confParticles.forEach(p => {
+                    p.tiltAngle += p.tiltAngleInc;
+                    p.y += p.dy;
+                    p.x += Math.sin(p.tiltAngle) * 2;
+                    
+                    if (p.y > confCanvas.height) {
+                        p.x = Math.random() * confCanvas.width;
+                        p.y = -10;
+                    }
+
+                    confettiCtx.beginPath();
+                    confettiCtx.lineWidth = p.r;
+                    confettiCtx.strokeStyle = p.color;
+                    confettiCtx.moveTo(p.x + p.tilt + p.r, p.y);
+                    confettiCtx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r);
+                    confettiCtx.stroke();
+                });
+                confettiInterval = requestAnimationFrame(renderConfetti);
+            }
+            renderConfetti();
+        }
+
+        function stopConfetti() {
+            cancelAnimationFrame(confettiInterval);
+            if(confettiCtx) confettiCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        }
+
+        // --- STREAMING_CHUNK:Event Listeners & Main Init ---
+        
+        // Audio Controls
+        document.getElementById('btn-music').addEventListener('click', (e) => {
+            gameState.settings.music = !gameState.settings.music;
+            e.target.textContent = gameState.settings.music ? '🎵' : '🔇';
+            if(gameState.settings.music) startBGM();
+            else stopBGM();
+        });
+
+        document.getElementById('btn-sfx').addEventListener('click', (e) => {
+            gameState.settings.sfx = !gameState.settings.sfx;
+            e.target.textContent = gameState.settings.sfx ? '🔊' : '🔈';
+        });
+
+        document.getElementById('volume-slider').addEventListener('input', (e) => {
+            gameState.settings.volume = parseFloat(e.target.value);
+        });
+
+        // UI Buttons
+        document.getElementById('btn-start').addEventListener('click', () => {
+            // Try init audio on first click
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            showScreen('setup');
+        });
+
+        ui.setup.btnPlay.addEventListener('click', initGame);
+
+        document.getElementById('btn-restart').addEventListener('click', () => {
+            stopConfetti();
+            initGame();
+        });
+
+        document.getElementById('btn-menu').addEventListener('click', () => {
+            stopConfetti();
+            stopBGM();
+            showScreen('splash');
+        });
+
+        document.getElementById('btn-home').addEventListener('click', () => {
+            if(confirm("Yakin ingin kembali ke menu utama? Balapan ini akan dibatalkan.")) {
+                stopBGM();
+                clearInterval(gameState.timerInterval);
+                showScreen('splash');
+            }
+        });
+
+        // Help Modal
+        document.getElementById('btn-help').addEventListener('click', () => {
+            document.getElementById('modal-help').classList.remove('hidden');
+        });
+        document.getElementById('btn-close-help').addEventListener('click', () => {
+            document.getElementById('modal-help').classList.add('hidden');
+        });
+
+        // Fullscreen
+        document.getElementById('btn-fullscreen').addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        });
+
+        // Initial setup
+        // Set default avatars visually
+        selectAvatar(1, ui.setup.p1Avatars[0]);
+        selectAvatar(2, ui.setup.p2Avatars[1]);
+
+    </script>
+</body>
+</html>
